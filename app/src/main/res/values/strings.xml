@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Test</string>
+    <string name="hi_there">Hi There!</string>
+    <string name="please_login_to_see_your_contact_list">Please login to see your contact list</string>
 </resources>

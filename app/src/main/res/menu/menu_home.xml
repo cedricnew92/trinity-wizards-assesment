@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/m_contacts"
+        android:enabled="true"
+        android:title="contact"
+        android:icon="@drawable/ic_grid_grey" />
+    <item
+        android:id="@+id/m_profile"
+        android:enabled="true"
+        android:title="profile"
+        android:icon="@drawable/ic_person_grey"/>
+</menu>

@@ -126,7 +126,7 @@ object ContactsRepo {
         val filtered = contacts.filter { it.id == id }
         if (filtered.isEmpty())
             throw Exception("Contact not found")
-        val contact = contacts[0]
+        val contact = filtered[0]
         return contact
     }
 

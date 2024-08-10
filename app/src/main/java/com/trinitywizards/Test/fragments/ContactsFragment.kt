@@ -1,24 +1,27 @@
 package com.trinitywizards.Test.fragments
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.trinitywizards.Test.DetailsContactActivity
 import com.trinitywizards.Test.R
@@ -26,7 +29,7 @@ import com.trinitywizards.Test.adapters.ContactsAdapter
 import com.trinitywizards.Test.models.Contact
 import com.trinitywizards.Test.models.Contacts
 import com.trinitywizards.Test.viewmodels.ContactsViewModel
-import com.trinitywizards.Test.viewmodels.ProfileViewModel
+
 
 class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
 
@@ -60,6 +63,15 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
 
     }
 
+    private val focus = object : OnFocusChangeListener {
+        override fun onFocusChange(p0: View?, p1: Boolean) {
+            if (p1)
+                et_search.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_blue), null)
+            else
+                et_search.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_grey), null)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,8 +79,15 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
     ): View {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
 
+        view.findViewById<ConstraintLayout>(R.id.contacts).setOnClickListener {
+            et_search.clearFocus()
+            val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
         et_search = view.findViewById(R.id.et_search)
         et_search.addTextChangedListener(watcher)
+        et_search.onFocusChangeListener = focus
 
         sfl_contacts = view.findViewById(R.id.srl_contacts)
         rv_contacts = view.findViewById(R.id.rv_contacts)

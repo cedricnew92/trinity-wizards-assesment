@@ -2,6 +2,9 @@ package com.trinitywizards.Test.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +30,8 @@ import com.trinitywizards.Test.viewmodels.ProfileViewModel
 
 class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
 
+    private val TAG = javaClass.simpleName
+
     private val mViewModel: ContactsViewModel by viewModels { ContactsViewModel.Factory }
 
     private val lDetails = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -42,6 +47,19 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
     private lateinit var adapter: ContactsAdapter
     private lateinit var pb : ProgressBar
 
+    private val watcher = object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+            mViewModel.search(p0.toString())
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,6 +68,7 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
 
         et_search = view.findViewById(R.id.et_search)
+        et_search.addTextChangedListener(watcher)
 
         sfl_contacts = view.findViewById(R.id.srl_contacts)
         rv_contacts = view.findViewById(R.id.rv_contacts)
@@ -81,6 +100,14 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
                 }
                 Contacts.Companion.Status.EDIT -> {
                     detail(it.contact!!)
+                }
+                Contacts.Companion.Status.SEARCH -> {
+                    val contacts = it.contacts!!
+                    val mLayoutManager = LinearLayoutManager(requireContext())
+                    rv_contacts.layoutManager = mLayoutManager
+                    adapter = ContactsAdapter(requireContext(), contacts)
+                    adapter.listener = this
+                    rv_contacts.adapter = adapter
                 }
             }
         }

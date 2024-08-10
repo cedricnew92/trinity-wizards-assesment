@@ -17,6 +17,7 @@ data class Contacts(
         enum class Status {
             INIT_COMPLETE,
             EDIT,
+            SEARCH
         }
     }
 }

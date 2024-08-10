@@ -43,6 +43,7 @@ class ContactsViewModel(
     var mLiveData : MutableLiveData<Contacts> = MutableLiveData()
     var mErrorData : MutableLiveData<Error> = MutableLiveData()
     private var mContacts = ArrayList<Contact>()
+    private var mSearches = ArrayList<Contact>()
     private var mJob: Job? = null
 
     fun reset(context: Context) {
@@ -94,6 +95,23 @@ class ContactsViewModel(
                 mLiveData.postValue(Contacts(Contacts.Companion.Status.EDIT, contact))
             } catch (e: Exception) {
                 mErrorData.postValue(Error(e))
+            }
+        }
+    }
+
+    fun search(query: String) {
+        mJob = viewModelScope.launch {
+            try {
+                if (query.isEmpty())
+                    mLiveData.postValue(Contacts(Contacts.Companion.Status.INIT_COMPLETE, mContacts))
+                else {
+                    mSearches.clear()
+                    mSearches.addAll(mContacts.filter { (it.firstname.lowercase() + " " + it.lastname.lowercase()).contains(query.lowercase()) })
+                    mLiveData.postValue(Contacts(Contacts.Companion.Status.SEARCH, mSearches))
+                }
+
+            } catch (e: Exception) {
+
             }
         }
     }

@@ -1,4 +1,4 @@
-This test has features:
+This test have the features below:
 1. Splash page to check cached logged in id and redirect to home page if not redirect to login.
 2. Login will refer to the id in data.json as login criteria, once logged in it will cache the id.
 3. Home page sometime will take to load the contacts and once loaded it will be buttery smooth.

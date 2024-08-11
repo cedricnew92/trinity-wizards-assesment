@@ -1,7 +1,11 @@
+import java.text.SimpleDateFormat
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
+
+def name = "TrinityWizardsTest"
 
 android {
     namespace 'com.trinitywizards.Test'
@@ -12,15 +16,27 @@ android {
         minSdk 26
         targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "${minSdkVersion.apiLevel}.0.${buildTime()}.${defaultConfig.versionCode}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "$name-${defaultConfig.versionName}.apk"
+                }
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "$name-${defaultConfig.versionName}.apk"
+                }
+            }
         }
     }
     compileOptions {
@@ -30,6 +46,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+}
+
+def buildTime() {
+    def df = new SimpleDateFormat("yy") // you can change it
+    def date = new Date()
+    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Kuala_Lumpur"))
+    def yearWeek = df.format(date).toString() + String.format("%02d", cal.get(Calendar.WEEK_OF_YEAR) - 1)
+    return yearWeek
 }
 
 dependencies {

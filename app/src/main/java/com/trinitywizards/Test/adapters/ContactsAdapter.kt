@@ -13,7 +13,7 @@ import com.trinitywizards.Test.models.Contact
 import com.trinitywizards.Test.views.ContactView
 import java.util.ArrayList
 
-class ContactsAdapter(val context: Context, private val contacts: ArrayList<Contact>) : RecyclerView.Adapter<ContactsAdapter.ViewHolder?>() {
+class ContactsAdapter(val context: Context, var contacts: ArrayList<Contact>) : RecyclerView.Adapter<ContactsAdapter.ViewHolder?>() {
 
     var listener : OnItemClickListener? = null
 

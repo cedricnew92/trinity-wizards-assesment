@@ -29,6 +29,7 @@ import com.trinitywizards.Test.adapters.ContactsAdapter
 import com.trinitywizards.Test.models.Contact
 import com.trinitywizards.Test.models.Contacts
 import com.trinitywizards.Test.viewmodels.ContactsViewModel
+import java.util.ArrayList
 
 
 class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
@@ -106,6 +107,11 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val mLayoutManager = LinearLayoutManager(requireContext())
+        rv_contacts.layoutManager = mLayoutManager
+        adapter = ContactsAdapter(requireContext(), ArrayList())
+        rv_contacts.adapter = adapter
+        adapter.listener = this
         mViewModel.mErrorData.observe(viewLifecycleOwner) {
             pb.visibility = View.GONE
             Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
@@ -116,22 +122,16 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
             when(it.status) {
                 Contacts.Companion.Status.INIT_COMPLETE -> {
                     val contacts = it.contacts!!
-                    val mLayoutManager = LinearLayoutManager(requireContext())
-                    rv_contacts.layoutManager = mLayoutManager
-                    adapter = ContactsAdapter(requireContext(), contacts)
-                    adapter.listener = this
-                    rv_contacts.adapter = adapter
+                    adapter.contacts = contacts
+                    adapter.notifyDataSetChanged()
                 }
                 Contacts.Companion.Status.EDIT -> {
                     detail(it.contact!!)
                 }
                 Contacts.Companion.Status.SEARCH -> {
                     val contacts = it.contacts!!
-                    val mLayoutManager = LinearLayoutManager(requireContext())
-                    rv_contacts.layoutManager = mLayoutManager
-                    adapter = ContactsAdapter(requireContext(), contacts)
-                    adapter.listener = this
-                    rv_contacts.adapter = adapter
+                    adapter.contacts = contacts
+                    adapter.notifyDataSetChanged()
                 }
             }
         }

@@ -39,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
             mViewModel.login(this@LoginActivity, id)
         }
         mViewModel.mErrorData.observe(this) {
+            pb.visibility = View.GONE
             Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
         }
         mViewModel.mLiveData.observe(this) {

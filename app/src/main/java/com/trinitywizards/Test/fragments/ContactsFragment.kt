@@ -44,6 +44,7 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
         mViewModel.initialize(requireContext())
     }
 
+    private lateinit var root : ConstraintLayout
     private lateinit var et_search : EditText
     private lateinit var sfl_contacts : SwipeRefreshLayout
     private lateinit var rv_contacts : RecyclerView
@@ -63,13 +64,17 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
 
     }
 
-    private val focus = object : OnFocusChangeListener {
-        override fun onFocusChange(p0: View?, p1: Boolean) {
-            if (p1)
-                et_search.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_blue), null)
-            else
-                et_search.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_grey), null)
-        }
+    private val focus = OnFocusChangeListener { p0, p1 ->
+        if (p1)
+            et_search.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_blue), null)
+        else
+            et_search.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_grey), null)
+    }
+
+    fun unFocus() {
+        et_search.clearFocus()
+        val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(root.windowToken, 0)
     }
 
     override fun onCreateView(
@@ -79,10 +84,9 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
     ): View {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
 
-        view.findViewById<ConstraintLayout>(R.id.contacts).setOnClickListener {
-            et_search.clearFocus()
-            val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        root = view.findViewById(R.id.contacts)
+        root.setOnClickListener {
+            unFocus()
         }
 
         et_search = view.findViewById(R.id.et_search)
@@ -92,6 +96,7 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
         sfl_contacts = view.findViewById(R.id.srl_contacts)
         rv_contacts = view.findViewById(R.id.rv_contacts)
         view.findViewById<FloatingActionButton>(R.id.fab_add).setOnClickListener {
+            unFocus()
             detail(null)
         }
         pb = view.findViewById(R.id.pb)
@@ -140,6 +145,7 @@ class ContactsFragment : Fragment(), ContactsAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
+        unFocus()
         pb.visibility = View.VISIBLE
         mViewModel.get(position)
     }
